@@ -1,36 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './App.css';
 import { MapContainer, TileLayer, Marker, Popup, useMapEvents } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import { Icon } from 'leaflet';
 import MarkerClusterGroup from 'react-leaflet-cluster';
-
-const markers = [
-  {
-    geocode: [54.022, 21.77],
-    popUp: {
-      name: 'Stacja 1',
-      hours: 'Godziny otwarcia: 9:00-18:00',
-      phone: 'Telefon: 123-456-789'
-    }
-  },
-  {
-    geocode: [54.03, 21.78],
-    popUp: {
-      name: 'Stacja 2',
-      hours: 'Godziny otwarcia: 9:00-18:00',
-      phone: 'Telefon: 123-456-789'
-    }
-  },
-  {
-    geocode: [54.035, 21.76],
-    popUp: {
-      name: 'Stacja 3',
-      hours: 'Godziny otwarcia: 9:00-18:00',
-      phone: 'Telefon: 123-456-789'
-    }
-  },
-];
 
 const customIcon = new Icon({
   iconUrl: require('./gas-pump.png'),
@@ -93,7 +66,7 @@ function MarkerForm({ markers, setMarkers, selectedMarkerIndex, setSelectedMarke
     const updatedMarkers = markers.filter((marker, index) => index !== selectedMarkerIndex);
     setMarkers(updatedMarkers);
     setSelectedMarkerIndex(null);
-    setEditing(false); 
+    setEditing(false);
     setDeleting(false);
   };
 
@@ -122,11 +95,34 @@ function MarkerForm({ markers, setMarkers, selectedMarkerIndex, setSelectedMarke
 }
 
 function App() {
-  const [markerList, setMarkerList] = useState(markers);
+  const [markerList, setMarkerList] = useState([]);
   const [addingMarker, setAddingMarker] = useState(false);
   const [selectedMarkerIndex, setSelectedMarkerIndex] = useState(null);
   const [editing, setEditing] = useState(false);
   const [deleting, setDeleting] = useState(false);
+
+  useEffect(() => {
+    fetch('stationsapi-production.up.railway.app/api/stations')  
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Network response was not ok ' + response.statusText);
+        }
+        return response.json();
+      })
+      .then(data => {
+        const fetchedMarkers = data.map(station => ({
+          geocode: [station.lat, station.lng],
+          popUp: {
+            name: station.name,
+            hours: `Godziny otwarcia: ${station.openingHour}-${station.closingHour}`,
+            phone: `Telefon: ${station.phone}`
+          },
+          icon: customIcon,
+        }));
+        setMarkerList(fetchedMarkers);
+      })
+      .catch(error => console.error('Error fetching data:', error));
+  }, []);
 
   const handleAddMarkerClick = () => {
     setAddingMarker(true);
