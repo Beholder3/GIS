@@ -36,3 +36,65 @@
     transform: rotate(360deg);
   }
 }
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+#root {
+  height: 100vh;
+}
+
+.leaflet-container {
+  height: 100vh;
+}
+
+.controls {
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 10px;
+  z-index: 1000;
+}
+
+.controls button {
+  background-color: #87ceeb;
+  border: 1px solid black;
+  padding: 10px;
+  cursor: pointer;
+}
+
+.marker-form {
+  position: absolute;
+  top: 50px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: white;
+  padding: 10px;
+  border: 1px solid #ccc;
+  z-index: 1000;
+}
+
+.marker-form label {
+  display: block;
+  margin-bottom: 10px;
+}
+
+.marker-form input {
+  width: 100%;
+  padding: 5px;
+  margin-top: 5px;
+}
+
+.marker-form button {
+  display: block;
+  width: 100%;
+  padding: 10px;
+  background-color: #87ceeb;
+  border: 1px solid black;
+  cursor: pointer;
+}
